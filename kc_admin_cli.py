@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import os
 
@@ -110,6 +111,18 @@ class CmdHandler:
     def deleteRealm(self,args):
         resp=requests.delete(keycloakBase + '/admin/realms/' + args.realm, headers=headers)
         resp.raise_for_status()
+    def listClients(self, args):
+
+        resp = requests.get(keycloakBase + '/admin/realms/' + args.realm + "/clients", headers=headers,
+                            params={'clientId':args.client})
+        resp.raise_for_status()
+        clientsFound=json.loads(resp.content)
+        if not clientsFound:
+            print("# No client(s) found")
+            exit(-1)
+        else:
+            for cc in json.loads(resp.content):
+                print(cc)
 
     def createClient(self,args):
         payload = {
@@ -149,6 +162,7 @@ class CmdHandler:
         resp.raise_for_status()
         for realm in json.loads(resp.content):
             print(realm['realm'])
+
 
 
 CmdHandler().callCmd(args)

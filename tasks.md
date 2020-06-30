@@ -1,24 +1,6 @@
-## 
-I implemented two variants:
+## Usage 
 
-### hand-crafted keycloak  
-This uses no external libs. I 
-
-
-I assume, that it is allowed to use 3rd-party python-modules, to handle the 
-calls to the keycloak admin rest-api.
-
-This script requires as a setup with eg pip:
-
-`pip3 install python-keycloak`
-
-
-The last task "detect a missing .." assumes, that we have target state to compare to.
-
---Therefore all the iterative commands will be implemented as a two step
-:   
-
-
+This uses no external libs. 
 all tasks are done, by calling the kc_admin_cli.py with some parameters:
 
 ### Credentials
@@ -28,7 +10,6 @@ KEYCLOAK_USER=admin
 KEYCLOAK_PWD=admin
 ```
 As a fallback, they are asked from  the user.
-
  
 
 #### 1. dump the id token
@@ -46,7 +27,6 @@ kc_admin_cli.py  --realm two createClient --client=anotherClient
 
 kc_admin_cli.py createRealm --realm three --displayName "Third demo realm"  
 kc_admin_cli.py  --realm three createClient --client=yac
-
 ```
 
 #### 3. add a redirect URL to one client
@@ -55,9 +35,27 @@ kc_admin_cli.py  --realm three createClient --client=yac
 
 #### 4. delete one client
 
-`kc_admin_cli.py --realm one --deleteClient myClient`
+`kc_admin_cli.py --realm one deleteClient --client=myClient`
  
-#### 5. syncing ??
+#### 5a. manual check the clients
+
+Query for the client:
+`kc_admin_cli.py --realm one listClients --client=myClient`
+
+If "# No client(s) found", than the client is gone.
+
+To recreate, all the calls, eg. like
+```shell script
+kc_admin_cli.py  --realm one createClient --client=myClient
+kc_admin_cli.py addRedirect --realm one --client myClient  --url http://over.the.rainbow
+``` 
+
+needs to be performed. 
+ 
+#### 5b. keep a state (of clients only)
+
+**NYI**
+
 The task "Detect that one of the clients is missing" , could mean, that we should be able 
 to detect that we need to know the expected clients **without** providing this as parameter. 
  
